@@ -1,5 +1,5 @@
 [project]
-name = "simple_cfg"  # Required
+name = "simple-cfg"  # Required
 version = "0.0.1"  # Required
 description = "Simple and effective command line parsing with nested fields"  # Optional
 # readme = {file = "README.md"} # Optional
