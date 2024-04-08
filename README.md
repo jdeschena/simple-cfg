@@ -12,3 +12,6 @@ pip install git+ssh://git@github.com/jdeschena/simple_cfg.git
 ```
 git+ssh://git@github.com/jdeschena/simple_cfg
 ```
+
+#### How to use
+See `example.py` and `example_lib.py` for how to define configurations and parse.
