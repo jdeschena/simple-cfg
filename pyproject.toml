@@ -1,0 +1,33 @@
+[project]
+name = "simple_cfg"  # Required
+version = "0.0.1"  # Required
+description = "Simple and effective command line parsing with nested fields"  # Optional
+# readme = {file = "README.md"} # Optional
+
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+
+# This field adds keywords for your project which will appear on the
+# project page. What does your project relate to?
+#
+# Note that this is a list of additional keywords, separated
+# by commas, to be used to assist searching for the distribution in a
+# larger catalog.
+keywords = ["machine learning"]  # Optional
+
+authors = [
+  {name = "Justin Deschenaux", email = "justin.deschenaux@gmail.com" } # Optional
+]
+
+maintainers = [
+  {name = "Justin Deschenaux", email = "justin.deschenaux@gmail.com" } # Optional
+]
+
+dependencies = [
+    "omegaconf",
+]
+
+
+
+#requires = ["setuptools>=43.0.0", "wheel"]
+#build-backend = "setuptools.build_meta"
