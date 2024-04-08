@@ -5,12 +5,12 @@
 
 #### pip
 ```
-pip install git+ssh://git@github.com/jdeschena/simple_cfg.git
+pip install git+ssh://git@github.com/jdeschena/simple-cfg.git
 ```
 
 #### requirements.txt
 ```
-git+ssh://git@github.com/jdeschena/simple_cfg
+git+ssh://git@github.com/jdeschena/simple-cfg
 ```
 
 #### How to use
