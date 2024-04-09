@@ -25,7 +25,6 @@ if __name__ == "__main__":
     add_module_args(parser, "lib", "sub_lib", args_fn="default_args")
     # Parse + save config
     args = parse_args(parser)
-    import os
     os.makedirs(args.workdir, exist_ok=False)
     save_args_to_cfg(args)
 

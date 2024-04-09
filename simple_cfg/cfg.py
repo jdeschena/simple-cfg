@@ -282,7 +282,8 @@ def parse_args(parser: argparse.ArgumentParser, parse_known_only=False, args=Non
     if not parse_known_only:
         check_missing_keys(parser, args)
 
-    args = check_workdir(args)
+    if args.workdir is None:
+        args = check_workdir(args)
     return args
 
 
