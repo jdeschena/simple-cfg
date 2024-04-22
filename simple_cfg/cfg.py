@@ -213,7 +213,7 @@ def check_workdir(args: OmegaConf):
     now = datetime.now()
     day_str = now.strftime("%d-%m-%Y")
     time_str = now.strftime("%H:%M:%S")
-    workdir_parent = args.workdir_parent or "./"
+    workdir_parent = args.workdir_parent or "./runs"
     workdir = osp.join(workdir_parent, script_name, day_str, time_str)
 
     idx = 2
