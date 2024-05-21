@@ -5,7 +5,7 @@
 
 #### pip
 ```
-pip install git+https://git@github.com/jdeschena/simple-cfg.git
+pip install -U git+https://git@github.com/jdeschena/simple-cfg.git
 ```
 
 #### requirements.txt

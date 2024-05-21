@@ -8,6 +8,28 @@ from datetime import datetime
 import sys
 import importlib
 
+_TYPE_MAPPINGS = {
+    int: "Integer",
+    float: "Float",
+    str: "String",
+    bool: "Boolean",
+    list: "List",
+    dict: "Dictionary",
+    tuple: "Tuple",
+    set: "Set",
+    frozenset: "Frozen Set",
+    complex: "Complex Number",
+    bytes: "Bytes",
+    bytearray: "Byte Array",
+    memoryview: "Memory View",
+    range: "Range",
+    type(None): "NoneType"
+}
+
+
+def get_cli_type_string(obj_type):
+    return _TYPE_MAPPINGS.get(obj_type, None)
+
 
 def vassert(cond: bool, err_msg: str):
     """Assertion util; raise a ValueError if the condition is not met
@@ -126,15 +148,25 @@ def add_args(parser: argparse.ArgumentParser, defaults: dict, prefix: str = ""):
     for k, v in defaults.items():
         v_type = type(v)
         if v is None:
-            v_type = str
+            parse_type = str
+            help_type = str
         elif isinstance(v, bool):
-            v_type = str2bool
+            parse_type = str2bool
+            help_type = bool
 
         if prefix != "":
             k = f"--{prefix}.{k}"
         else:
             k = "--" + k
-        parser.add_argument(k, default=v, type=v_type, help=f"Type: `{v_type}`. Default value: `{v}`.")
+
+        helper_type = get_cli_type_string(help_type)
+        helper_string = f"Default: `{v}`"
+        if helper_type is None:
+            helper_string += " (Unknown type)"
+        else:
+            helper_string += f". Type: {helper_type}"
+        
+        parser.add_argument(k, default=v, type=parse_type, help=helper_string)
 
 
 def add_module_args(parser: argparse.ArgumentParser, attr: str, prefix: str, args_fn: str = "default_args"):
