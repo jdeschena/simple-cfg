@@ -134,7 +134,7 @@ def add_args(parser: argparse.ArgumentParser, defaults: dict, prefix: str = ""):
             k = f"--{prefix}.{k}"
         else:
             k = "--" + k
-        parser.add_argument(k, default=v, type=v_type)
+        parser.add_argument(k, default=v, type=v_type, help=f"Type: `{v_type}`. Default value: `{v}`.")
 
 
 def add_module_args(parser: argparse.ArgumentParser, attr: str, prefix: str, args_fn: str = "default_args"):
