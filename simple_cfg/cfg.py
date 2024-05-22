@@ -153,6 +153,8 @@ def add_args(parser: argparse.ArgumentParser, defaults: dict, prefix: str = ""):
         elif isinstance(v, bool):
             parse_type = str2bool
             help_type = bool
+        else:
+            help_type = parse_type = v_type
 
         if prefix != "":
             k = f"--{prefix}.{k}"
