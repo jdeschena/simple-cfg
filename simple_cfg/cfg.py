@@ -233,7 +233,7 @@ def check_missing_keys(parser: argparse.ArgumentParser, args: dict):
     
 
 def check_workdir(args: OmegaConf):
-    """Check that the `workdir` key is set, otherwise compute it from `workdir_parent`
+    """Check that the `workdir` key is set, or compute a value based of script name
 
     Args:
         args (OmegaConf): Object containing the cli args
@@ -245,7 +245,7 @@ def check_workdir(args: OmegaConf):
     now = datetime.now()
     day_str = now.strftime("%d-%m-%Y")
     time_str = now.strftime("%H:%M:%S")
-    workdir_parent = args.workdir_parent or "./runs"
+    workdir_parent = "./runs"
     workdir = osp.join(workdir_parent, script_name, day_str, time_str)
 
     idx = 2
