@@ -131,8 +131,6 @@ def default_arguments():
     return dict(
         seed=0,
         cfg_from=None,
-        cfg_save_path=None,
-        workdir_parent=None,
         workdir=None,
     )
 
@@ -322,18 +320,14 @@ def parse_args(parser: argparse.ArgumentParser, parse_known_only=False, args=Non
 
 
 def save_args_to_cfg(args: dict):
-    """Save arguments to a config file for reproducibility. If args.cfg_save_path is set, use the provided path, otherwise, infer save path from running script and datetime.
+    """Save arguments to a config file for reproducibility. Use workdir field to find where to save.
 
     Args:
         args (dict): OmegaConf dict of arguments.
     """
-    # Save config into yaml file
-    if args.cfg_save_path is not None:
-        config_out_path = args.cfg_save_path
-    else:
-        config_out_path = osp.join(args.workdir, "config.yaml")
+    config_out_path = osp.join(args.workdir, "config.yaml")
+    os.makedirs(args.workdir, exist_ok=True)
 
-    print(f"Saving the run's config in yaml file {config_out_path}.")
     with open(config_out_path, "w") as f:
         f.writelines(OmegaConf.to_yaml(args))
 
