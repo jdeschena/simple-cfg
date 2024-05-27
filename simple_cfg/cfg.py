@@ -319,6 +319,12 @@ def parse_args(parser: argparse.ArgumentParser, parse_known_only=False, args=Non
     return args
 
 
+def get_parser():
+    parser = argparse.ArgumentParser()
+    add_args(parser, default_arguments())
+    return parser
+
+
 def save_args_to_cfg(args: dict):
     """Save arguments to a config file for reproducibility. Use workdir field to find where to save.
 
