@@ -7,6 +7,7 @@ from os import path as osp
 from datetime import datetime
 import sys
 import importlib
+import inspect
 
 _TYPE_MAPPINGS = {
     int: "Integer",
@@ -23,7 +24,7 @@ _TYPE_MAPPINGS = {
     bytearray: "Byte Array",
     memoryview: "Memory View",
     range: "Range",
-    type(None): "NoneType"
+    type(None): "NoneType",
 }
 
 
@@ -165,23 +166,71 @@ def add_args(parser: argparse.ArgumentParser, defaults: dict, prefix: str = ""):
             helper_string += " (Unknown type)"
         else:
             helper_string += f". Type: {helper_type}"
-        
+
         parser.add_argument(k, default=v, type=parse_type, help=helper_string)
 
 
-def add_module_args(parser: argparse.ArgumentParser, attr: str, prefix: str, args_fn: str = "default_args"):
+def get_default_from_signature(sig):
+    default_args = dict()
+    empty_parameters = []
+
+    for k, v in sig.parameters.items():
+        if k == "self":
+            continue
+        if v.default is inspect.Parameter.empty:
+            empty_parameters.append(k)
+        else:
+            default_args[k] = v.default
+
+    if len(empty_parameters) > 0:
+        err_message = "The following parameters have no default_values. Please define a default value for the parser to work:\n"
+        err_message += "\n".join("\t* " + v for v in empty_parameters)
+        raise ValueError(err_message)
+
+    return default_args
+
+
+def get_default_from_fn(fn):
+    sig = inspect.signature(fn)
+    if len(sig.parameters) == 0:
+        return fn()  # Assumes that it returns a dictionary containing the parameters
+    else:
+        return get_default_from_signature(sig)
+
+
+def get_default_from_class(cls):
+    sig = inspect.signature(cls.__init__)
+    return get_default_from_signature(sig)
+
+
+def get_default_args(obj):
+    if inspect.isfunction(obj):
+        return get_default_from_fn(obj)
+    elif inspect.isclass(obj):
+        return get_default_from_class(obj)
+    else:
+        raise ValueError(
+            f"`obj` should be either a callable function or a class. Current type: `{type(obj)}`"
+        )
+
+
+def add_module_args(
+    parser: argparse.ArgumentParser, attr: str, prefix: str, loc: str = "default_args"
+):
     """Add default arguments, imported from the module referenced in `attr` into the parser.
 
     Args:
         parser (argparse.ArgumentParser): Standard argparse's parser.
         attr (str): Argument from the parser where the library to import from is stored. Example: "library.module1".
-        prefix (str): Prefix of defaults imported from `attr`.
+        prefix (str): Prefix of defaults imported from `attr` (i.e. in what sub field of the config they will be).
+        loc (str): Which attribute of the module to take arguments from. Can be a top-level class or function.
     """
     args = parse_args(parser, parse_known_only=True)
     module_key = get_args_rec(args, attr)
     if module_key is not None:
         module = importlib.import_module(module_key)
-        args_to_add = getattr(module, args_fn)()
+        obj = getattr(module, loc)
+        args_to_add = get_default_args(obj)
         add_args(parser, args_to_add, prefix)
 
 
@@ -230,7 +279,7 @@ def check_missing_keys(parser: argparse.ArgumentParser, args: dict):
             err_message += f"\n    * `{k}`"
 
         raise ValueError(err_message)
-    
+
 
 def check_workdir(args: OmegaConf):
     """Check that the `workdir` key is set, or compute a value based of script name
@@ -272,7 +321,7 @@ def parse_args(parser: argparse.ArgumentParser, parse_known_only=False, args=Non
     """
     known_only_args, _ = parser.parse_known_args(args)
     known_keys = set(vars(known_only_args).keys())
-    
+
     if known_only_args.cfg_from is not None:
         # Load config from file if cfg_from defined
         with open(known_only_args.cfg_from, "r") as f:
